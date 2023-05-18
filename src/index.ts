@@ -9,10 +9,12 @@ const {
   PORT = "3000",
   HEADLESS = "new",
   INTERVAL = "60000",
+  HOST = "0.0.0.0",
 } = process.env as {
   PORT: string;
   HEADLESS: HeadlessType;
   INTERVAL: string;
+  HOST: string;
 };
 const fastify = Fastify({
   logger: true,
@@ -75,7 +77,7 @@ async function main() {
       `Num pages: ${await browser.pages().then((pages) => pages.length)}`
     );
   }, parseInt(INTERVAL));
-  fastify.listen({ port: parseInt(PORT) }).catch((err) => {
+  fastify.listen({ port: parseInt(PORT), host: HOST }).catch((err) => {
     fastify.log.error(err);
     process.exit(1);
   });
