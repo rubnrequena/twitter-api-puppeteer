@@ -68,6 +68,7 @@ fastify.get("/tweets/:user", tweetsSchema, async function (request, reply) {
 async function main() {
   browser = await puppeteer.launch({
     headless: HEADLESS,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   setInterval(async () => {
     console.log(
