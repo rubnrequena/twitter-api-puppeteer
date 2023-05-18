@@ -7,7 +7,7 @@
     "dev": "nodemon",
     "start": "node ./build/index.js",
     "build": "swc ./src/ --out-dir ./build",
-    "deploy": "git pull && pnpm run build && pm2 restart twiiterv2"
+    "deploy": "git pull && pnpm run build && pm2 restart twitterv2"
   },
   "keywords": [],
   "author": "",
