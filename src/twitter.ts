@@ -14,6 +14,9 @@ export class Twitter {
     return new Promise(async (resolve, reject) => {
       const page = await this.browser.newPage();
       await page.setViewport({ width: 1080, height: 1024 });
+      setTimeout(() => {
+        reject("Timeout reached");
+      }, 30000);
       page.on("response", async (response) => {
         const request = response.request();
         if (request.url().includes("UserTweets")) {
