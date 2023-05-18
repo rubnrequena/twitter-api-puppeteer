@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "start": "node ./build/index.js",
-    "build": "swc ./src/ --out-dir ./build"
+    "build": "swc ./src/ --out-dir ./build",
+    "deploy": "git pull && pnpm run build && pm2 restart twiiterv2"
   },
   "keywords": [],
   "author": "",
