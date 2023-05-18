@@ -39,33 +39,37 @@ const tweetsSchema = {
 };
 
 // Declare a route
-fastify.get("/tweets/:user", tweetsSchema, async function (request, reply) {
-  const { user } = request.params as { user: string };
-  const { limit, details } = request.query as {
-    limit: number;
-    details: DetailValue;
-  };
-  const bot = new Twitter(browser, user);
-  let tweets = await bot.tweets();
-  if (limit) tweets = tweets.slice(0, limit);
-  if (details === "simple") {
-    reply.send(
-      tweets.map((tweet) => {
-        const media =
-          tweet.content?.itemContent?.tweet_results.result.legacy.entities.media?.find(
-            (item) => item.type === "photo"
-          );
-        return {
-          full_text:
-            tweet.content?.itemContent?.tweet_results.result.legacy.full_text
-              .split("\n")
-              .join(" "),
-          url: media?.url,
-        };
-      })
-    );
-  } else reply.send(tweets);
-});
+fastify.get(
+  "/twitter/tweets/:user",
+  tweetsSchema,
+  async function (request, reply) {
+    const { user } = request.params as { user: string };
+    const { limit, details } = request.query as {
+      limit: number;
+      details: DetailValue;
+    };
+    const bot = new Twitter(browser, user);
+    let tweets = await bot.tweets();
+    if (limit) tweets = tweets.slice(0, limit);
+    if (details === "simple") {
+      reply.send(
+        tweets.map((tweet) => {
+          const media =
+            tweet.content?.itemContent?.tweet_results.result.legacy.entities.media?.find(
+              (item) => item.type === "photo"
+            );
+          return {
+            full_text:
+              tweet.content?.itemContent?.tweet_results.result.legacy.full_text
+                .split("\n")
+                .join(" "),
+            url: media?.url,
+          };
+        })
+      );
+    } else reply.send(tweets);
+  }
+);
 
 async function main() {
   browser = await puppeteer.launch({
