@@ -1,5 +1,6 @@
 import { Browser } from "puppeteer";
 import { EntryElement, TwitterResponse } from "./types";
+import { TIMEOUT } from ".";
 
 export class Twitter {
   private readonly user: string;
@@ -16,7 +17,7 @@ export class Twitter {
       await page.setViewport({ width: 1080, height: 1024 });
       setTimeout(() => {
         reject("Timeout reached");
-      }, 30000);
+      }, parseInt(TIMEOUT));
       page.on("response", async (response) => {
         const request = response.request();
         if (request.url().includes("UserTweets")) {

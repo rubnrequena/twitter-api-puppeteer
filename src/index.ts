@@ -5,14 +5,16 @@ import { Twitter } from "./twitter";
 import Fastify from "fastify";
 import { DetailValue, HeadlessType } from "./types";
 
-const {
+export const {
   PORT = "3000",
   HEADLESS = "new",
   HOST = "0.0.0.0",
+  TIMEOUT = "30000",
 } = process.env as {
   PORT: string;
   HEADLESS: HeadlessType;
   HOST: string;
+  TIMEOUT: string;
 };
 const fastify = Fastify({
   logger: true,
