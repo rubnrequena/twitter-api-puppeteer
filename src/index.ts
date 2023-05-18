@@ -42,13 +42,18 @@ fastify.get(
   tweetsSchema,
   async function (request, reply) {
     const { user } = request.params as { user: string };
-    console.log(`Getting tweets for ${user}`);
+    fastify.log.info({ user }, `Getting tweets`);
     const { limit, details } = request.query as {
       limit: number;
       details: DetailValue;
     };
     const bot = new Twitter(browser, user);
     let tweets = await bot.tweets();
+    if (!tweets) return reply.send("No tweets found").code(404);
+    fastify.log.info(
+      { user },
+      `Num pages: ${await browser.pages().then((pages) => pages.length)}`
+    );
     if (limit) tweets = tweets.slice(0, limit);
     if (details === "simple") {
       reply.send(
@@ -67,9 +72,6 @@ fastify.get(
         })
       );
     } else reply.send(tweets);
-    console.log(
-      `Num pages: ${await browser.pages().then((pages) => pages.length)}`
-    );
   }
 );
 
