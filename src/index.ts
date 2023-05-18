@@ -3,7 +3,7 @@ env.config();
 import puppeteer, { Browser } from "puppeteer";
 import { Twitter } from "./twitter";
 import Fastify from "fastify";
-import { DetailValue, HeadlessType } from "../types";
+import { DetailValue, HeadlessType } from "./types";
 
 const {
   PORT = "3000",

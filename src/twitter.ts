@@ -1,5 +1,5 @@
-import puppeteer, { Browser, Page } from "puppeteer";
-import { EntryElement, TwitterResponse } from "../types";
+import { Browser } from "puppeteer";
+import { EntryElement, TwitterResponse } from "./types";
 
 export class Twitter {
   private readonly user: string;
