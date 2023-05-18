@@ -42,7 +42,6 @@ fastify.get(
   tweetsSchema,
   async function (request, reply) {
     const { user } = request.params as { user: string };
-    fastify.log.info({ user }, `Getting tweets`);
     const { limit, details } = request.query as {
       limit: number;
       details: DetailValue;
