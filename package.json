@@ -16,6 +16,8 @@
     "dotenv": "^16.0.3",
     "fastify": "^4.17.0",
     "nodemon": "^2.0.22",
+    "pino": "^8.14.1",
+    "pino-loki": "^2.0.4",
     "puppeteer": "^20.2.1",
     "ts-node": "^10.9.1"
   }
