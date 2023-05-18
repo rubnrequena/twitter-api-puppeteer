@@ -8,12 +8,10 @@ import { DetailValue, HeadlessType } from "../types";
 const {
   PORT = "3000",
   HEADLESS = "new",
-  INTERVAL = "60000",
   HOST = "0.0.0.0",
 } = process.env as {
   PORT: string;
   HEADLESS: HeadlessType;
-  INTERVAL: string;
   HOST: string;
 };
 const fastify = Fastify({
@@ -69,6 +67,9 @@ fastify.get(
         })
       );
     } else reply.send(tweets);
+    console.log(
+      `Num pages: ${await browser.pages().then((pages) => pages.length)}`
+    );
   }
 );
 
@@ -77,11 +78,6 @@ async function main() {
     headless: HEADLESS,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
-  setInterval(async () => {
-    console.log(
-      `Num pages: ${await browser.pages().then((pages) => pages.length)}`
-    );
-  }, parseInt(INTERVAL));
   fastify.listen({ port: parseInt(PORT), host: HOST }).catch((err) => {
     fastify.log.error(err);
     process.exit(1);
