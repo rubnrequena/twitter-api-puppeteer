@@ -1,0 +1,21 @@
+{
+  "name": "twitter-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "node ./build/index.js",
+    "build": "swc ./src/ --out-dir ./build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fastify": "^4.17.0",
+    "nodemon": "^2.0.22",
+    "puppeteer": "^20.2.1",
+    "ts-node": "^10.9.1"
+  }
+}
