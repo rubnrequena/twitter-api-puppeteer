@@ -3,21 +3,40 @@ env.config();
 import puppeteer, { Browser } from "puppeteer";
 import { Twitter } from "./twitter";
 import Fastify from "fastify";
-import { DetailValue, HeadlessType } from "./types";
+import { Config, DetailValue, HeadlessType } from "./types";
+import { pino } from "pino";
 
 export const {
   PORT = "3000",
   HEADLESS = "new",
   HOST = "0.0.0.0",
   TIMEOUT = "30000",
-} = process.env as {
-  PORT: string;
-  HEADLESS: HeadlessType;
-  HOST: string;
-  TIMEOUT: string;
-};
+  GRAFANA_HOST,
+  GRAFANA_USER,
+  GRAFANA_PASSWORD,
+} = process.env as Partial<Config>;
+
+const transport = pino.transport({
+  target: "pino-loki",
+  options: {
+    batching: true,
+    interval: 5,
+    silenceErrors: false,
+    host: GRAFANA_HOST,
+    basicAuth: {
+      username: GRAFANA_USER,
+      password: GRAFANA_PASSWORD,
+    },
+    labels: {
+      app: "srq-twitter",
+      instance: process.env.INSTANCE_ID,
+    },
+  },
+});
+
+const logger = pino({ level: "info" }, transport);
 const fastify = Fastify({
-  logger: true,
+  logger: logger,
 });
 
 let browser: Browser;
@@ -51,10 +70,10 @@ fastify.get(
     const bot = new Twitter(browser, user);
     let tweets = await bot.tweets();
     if (!tweets) return reply.send("No tweets found").code(404);
-    fastify.log.info(
-      { user },
-      `Num pages: ${await browser.pages().then((pages) => pages.length)}`
-    );
+    fastify.log.info({
+      user,
+      pages: await browser.pages().then((pages) => pages.length),
+    });
     if (limit) tweets = tweets.slice(0, limit);
     if (details === "simple") {
       reply.send(

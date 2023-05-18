@@ -1,3 +1,13 @@
+export interface Config {
+  PORT: string;
+  HEADLESS: HeadlessType;
+  HOST: string;
+  TIMEOUT: string;
+  GRAFANA_USER: string;
+  GRAFANA_PASSWORD: string;
+  GRAFANA_HOST: string;
+}
+
 export interface TwitterResponse {
   data: Data;
 }
