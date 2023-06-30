@@ -72,11 +72,6 @@ export class Twitter {
     );
     console.log("password set");
 
-    /* setTimeout(async () => {
-      await page.screenshot({ path: "login.png" });
-      const html = await page.content();
-      fs.writeFileSync("login.html", html);
-    }, 5000); */
     await sendPassButton?.click();
     console.log("password sent");
 
@@ -88,9 +83,13 @@ export class Twitter {
     const sendTlfButton = await page.$(`[data-testid=ocfEnterTextNextButton]`);
 
     await Promise.all([
-      page.waitForNavigation({ waitUntil: "networkidle2", timeout: 5000 }),
+      page.waitForNavigation({ waitUntil: "networkidle2", timeout: 10000 }),
       sendTlfButton?.click(),
-    ]);
+    ]).catch(async (e) => {
+      await page.screenshot({ path: "login.png" });
+      const html = await page.content();
+      fs.writeFileSync("login.html", html);
+    });
     console.log("login completed");
   }
 }
