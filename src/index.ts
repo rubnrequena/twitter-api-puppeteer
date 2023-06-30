@@ -34,7 +34,7 @@ const transport = pino.transport({
   },
 });
 
-const logger = pino({ level: "info" }, transport);
+export const logger = pino({ level: "info" }, transport);
 const fastify = Fastify({
   logger: logger,
 });

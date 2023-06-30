@@ -1,6 +1,7 @@
 import { Browser, Page } from "puppeteer";
 import { EntryElement, TwitterResponse } from "./types";
-import { TIMEOUT } from ".";
+import { TIMEOUT, logger } from ".";
+import fs from "fs";
 
 export class Twitter {
   private readonly user: string;
@@ -21,7 +22,6 @@ export class Twitter {
       }, parseInt(TIMEOUT));
       page.on("response", async (response) => {
         const request = response.request();
-        console.log("request.url()", request.url());
         if (request.url().includes("UserTweets")) {
           const responseBody: TwitterResponse = await response.json();
           const instructions =
@@ -37,7 +37,7 @@ export class Twitter {
           resolve(entries);
         }
       });
-
+      logger.info(`Navigating to @${this.user}`);
       await page
         .goto(`https://twitter.com/${this.user}`, {
           waitUntil: "networkidle2",
@@ -53,6 +53,7 @@ export class Twitter {
   }
 
   async login(page: Page) {
+    console.log("login start");
     const userInput = await page.waitForSelector(
       "#layers > div > div > div > div > div > div > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv > div.css-1dbjc4n.r-1867qdf.r-1wbh5a2.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1.r-htvplk.r-1udh08x > div > div > div.css-1dbjc4n.r-14lw9ot.r-6koalj.r-16y2uox.r-1wbh5a2 > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-1ye8kvj.r-13qz1uu > div > div > div > div.css-1dbjc4n.r-mk0yit.r-1f1sjgu.r-13qz1uu > label > div > div.css-1dbjc4n.r-18u37iz.r-16y2uox.r-1wbh5a2.r-1wzrnnt.r-1udh08x.r-xd6kpl.r-1pn2ns4.r-ttdzmv > div > input"
     );
@@ -61,6 +62,7 @@ export class Twitter {
       "#layers > div > div > div > div > div > div > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv > div.css-1dbjc4n.r-1867qdf.r-1wbh5a2.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1.r-htvplk.r-1udh08x > div > div > div.css-1dbjc4n.r-14lw9ot.r-6koalj.r-16y2uox.r-1wbh5a2 > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-1ye8kvj.r-13qz1uu > div > div > div > div.css-18t94o4.css-1dbjc4n.r-1m3jxhj.r-sdzlij.r-1phboty.r-rs99b7.r-ywje51.r-usiww2.r-2yi16.r-1qi8awa.r-1ny4l3l.r-ymttw5.r-o7ynqc.r-6416eg.r-lrvibr.r-13qz1uu"
     );
     await sendUserButton?.click();
+    console.log("username set");
 
     const passInput = await page.waitForSelector(`[type=password]`);
     await passInput?.type(process.env.TWITTER_PASSWORD || "");
@@ -68,9 +70,27 @@ export class Twitter {
     const sendPassButton = await page.$(
       `#layers > div > div > div > div > div > div > div.css-1dbjc4n.r-1awozwy.r-18u37iz.r-1pi2tsx.r-1777fci.r-1xcajam.r-ipm5af.r-g6jmlv > div.css-1dbjc4n.r-1867qdf.r-1wbh5a2.r-kwpbio.r-rsyp9y.r-1pjcn9w.r-1279nm1.r-htvplk.r-1udh08x > div > div > div.css-1dbjc4n.r-14lw9ot.r-6koalj.r-16y2uox.r-1wbh5a2 > div.css-1dbjc4n.r-16y2uox.r-1wbh5a2.r-1jgb5lz.r-1ye8kvj.r-13qz1uu > div.css-1dbjc4n.r-1isdzm1 > div > div.css-1dbjc4n > div > div > div`
     );
+    console.log("password set");
+
+    /* setTimeout(async () => {
+      await page.screenshot({ path: "login.png" });
+      const html = await page.content();
+      fs.writeFileSync("login.html", html);
+    }, 5000); */
+    await sendPassButton?.click();
+    console.log("password sent");
+
+    const tlfInput = await page.waitForSelector(
+      `[data-testid="ocfEnterTextTextInput"]`
+    );
+    await tlfInput?.type(process.env.TWITTER_TLF || "");
+
+    const sendTlfButton = await page.$(`[data-testid=ocfEnterTextNextButton]`);
+
     await Promise.all([
-      page.waitForNavigation({ waitUntil: "networkidle2" }),
-      sendPassButton?.click(),
+      page.waitForNavigation({ waitUntil: "networkidle2", timeout: 5000 }),
+      sendTlfButton?.click(),
     ]);
+    console.log("login completed");
   }
 }
