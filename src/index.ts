@@ -97,7 +97,7 @@ fastify.get(
 
 async function main() {
   browser = await puppeteer.launch({
-    headless: false,
+    headless: HEADLESS,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   fastify.listen({ port: parseInt(PORT), host: HOST }).catch((err) => {
