@@ -20,12 +20,12 @@ export class Twitter {
       const page = await this.browser.newPage();
       this.lastPage = page;
       await page.setViewport({ width: 1080, height: 1024 });
-      timer = setTimeout(() => {
+      /* timer = setTimeout(() => {
         reject("Timeout reached");
         page.close();
-      }, parseInt(TIMEOUT));
+      }, parseInt(TIMEOUT)); */
       console.log("tweets");
-      /* page.on("response", async (response) => {
+      page.on("response", async (response) => {
         const request = response.request();
         if (request.url().includes("UserTweets")) {
           const responseBody: TwitterResponse = await response.json();
@@ -38,11 +38,11 @@ export class Twitter {
             entry.entryId.startsWith("tweet")
           );
           page.close();
-          clearTimeout(timer);
+          //clearTimeout(timer);
           if (!entries) return reject("No entries found");
           resolve(entries);
         }
-      }); */
+      });
       logger.info(`Navigating to @${this.user}`);
       page
         .goto(`https://twitter.com/${this.user}`, {
@@ -116,7 +116,8 @@ export class Twitter {
       .catch(() => {
         console.log("no tlf required");
       });
-    //await page.waitForNavigation({ waitUntil: "networkidle2", timeout: 10000 }),
+    await new Promise((r) => setTimeout(r, 3000));
+    this.screenshot(page, "login2");
     console.log("login completed");
   }
 

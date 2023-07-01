@@ -18,8 +18,6 @@ export const {
   CHROME_PATH = "/usr/bin/google-chrome",
 } = process.env as Partial<Config>;
 
-console.log(process.env);
-
 const transport = pino.transport({
   target: "pino-loki",
   options: {
@@ -37,6 +35,8 @@ const transport = pino.transport({
     },
   },
 });
+
+console.log("Connected as", process.env.TWITTER_USER);
 
 export const logger = pino({ level: "info" }, transport);
 const fastify = Fastify({
