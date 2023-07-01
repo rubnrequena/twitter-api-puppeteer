@@ -6,6 +6,7 @@ export interface Config {
   GRAFANA_USER: string;
   GRAFANA_PASSWORD: string;
   GRAFANA_HOST: string;
+  CHROME_PATH: string;
 }
 
 export interface TwitterResponse {

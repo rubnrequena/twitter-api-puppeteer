@@ -7,7 +7,9 @@
     "dev": "nodemon",
     "start": "node ./build/index.js",
     "build": "swc ./src/ --out-dir ./build",
-    "deploy": "git pull && pnpm run build && pm2 restart twitterv2"
+    "deploy": "git pull && pnpm run build && pm2 restart twitterv2",
+    "docker:build": "pnpm run build && sudo docker build -t rubn1987/srq:twitter-bot .",
+    "docker:run": "sudo docker run -p 0.0.0.0:3003:3003 --rm --name tweet rubn1987/srq:twitter-bot"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +19,10 @@
     "fastify": "^4.17.0",
     "pino": "^8.14.1",
     "pino-loki": "^2.0.4",
-    "puppeteer": "^20.2.1"
+    "puppeteer-core": "^20.7.4"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1"
   }
 }

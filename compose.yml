@@ -1,0 +1,28 @@
+version: "3.9"
+networks:
+  redinterna:
+    driver: bridge
+services:
+  twitter:
+    container_name: twitterv2
+    user: root
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 127.0.0.1:3003:3003
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3003
+      - HEADLESS=new
+      - CHROME_PATH=/usr/bin/google-chrome
+      - TIMEOUT=30000
+      - GRAFANA_HOST=https://logs-prod-017.grafana.net
+      - GRAFANA_USER=393502
+      - GRAFANA_PASSWORD=eyJrIjoiZjUzOWI1NDU5OTdlMzdkNDIzZjZlOGVjNTNjZTJkYzkyODljNjE1NCIsIm4iOiJzcnEtc2VydmVyIiwiaWQiOjgwMTQ0OX0=
+      - INSTANCE_ID=dev
+      - TWITTER_USER=macroguia
+      - TWITTER_PASSWORD=VmP%tc;(jAZ2n6!t
+      - TWITTER_TLF=584149970167
+    stdin_open: true
+    tty: true

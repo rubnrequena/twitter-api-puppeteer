@@ -1,10 +1,11 @@
 import env from "dotenv";
 env.config();
-import puppeteer, { Browser } from "puppeteer";
+import puppeteer, { Browser } from "puppeteer-core";
 import { Twitter } from "./twitter";
 import Fastify from "fastify";
-import { Config, DetailValue, HeadlessType } from "./types";
+import { Config, DetailValue } from "./types";
 import { pino } from "pino";
+import fs from "fs";
 
 export const {
   PORT = "3000",
@@ -14,7 +15,10 @@ export const {
   GRAFANA_HOST,
   GRAFANA_USER,
   GRAFANA_PASSWORD,
+  CHROME_PATH = "/usr/bin/google-chrome",
 } = process.env as Partial<Config>;
+
+console.log(process.env);
 
 const transport = pino.transport({
   target: "pino-loki",
@@ -68,7 +72,9 @@ fastify.get(
       details: DetailValue;
     };
     const bot = new Twitter(browser, user);
-    let tweets = await bot.tweets();
+    let tweets = await bot.tweets().catch((err) => {
+      console.error(err.name, err.message);
+    });
     if (!tweets) return reply.send("No tweets found").code(404);
     fastify.log.info({
       user,
@@ -95,11 +101,23 @@ fastify.get(
   }
 );
 
+fastify.get("/twitter/ss", async function (request, reply) {
+  const stream = fs.createReadStream(`./assets/temp_ss.png`);
+  reply.type("image/png").send(stream);
+});
+
 async function main() {
+  console.log("HEADLESS", HEADLESS);
   browser = await puppeteer.launch({
-    headless: HEADLESS,
+    headless: HEADLESS === "new" ? "new" : false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    defaultViewport: {
+      height: 1024,
+      width: 1080,
+    },
+    executablePath: CHROME_PATH,
   });
+
   fastify.listen({ port: parseInt(PORT), host: HOST }).catch((err) => {
     fastify.log.error(err);
     process.exit(1);

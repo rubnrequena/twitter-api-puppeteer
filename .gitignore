@@ -1,5 +1,7 @@
 /build
 /node_modules
 .env
+/userdata
+/assets
 
 pnpm-lock.yaml
