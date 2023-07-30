@@ -81,23 +81,7 @@ fastify.get(
       pages: await browser.pages().then((pages) => pages.length),
     });
     if (limit) tweets = tweets.slice(0, limit);
-    if (details === "simple") {
-      reply.send(
-        tweets.map((tweet) => {
-          const media =
-            tweet.content?.itemContent?.tweet_results.result.legacy.entities.media?.find(
-              (item) => item.type === "photo"
-            );
-          return {
-            full_text:
-              tweet.content?.itemContent?.tweet_results.result.legacy.full_text
-                .split("\n")
-                .join(" "),
-            url: media?.url,
-          };
-        })
-      );
-    } else reply.send(tweets);
+    reply.send(tweets);
   }
 );
 
