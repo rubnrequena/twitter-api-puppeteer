@@ -82,14 +82,12 @@ export class Twitter {
     console.log("login start");
     const userInput = await page.waitForSelector("input");
     await userInput?.type(process.env.TWITTER_USER || "");
-    const sendUserButton = await page.$(
-      `[role=button].css-18t94o4.css-1dbjc4n.r-1sw30gj`
-    );
+    const sendUserButton = await page.$$(`[role=button]`);
     if (sendUserButton) {
-      await sendUserButton.click().catch((err) => {
-        console.error("sendUserButton not found", err.name, err.message);
-      });
-    } else console.error("sendUserButton not found");
+      await sendUserButton[2]
+        ?.click()
+        .catch((err) => console.error("sendUserButton not found"));
+    }
     console.log("username set");
 
     //setInterval(async () => this.screenshot(page, "find_password"), 1000);
