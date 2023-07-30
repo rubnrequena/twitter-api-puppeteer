@@ -42,13 +42,13 @@ export class Twitter {
           const entries = match(this.pattern, instructions);
           this.running = false;
           global.clearTimeout(timer);
-          page?.close();
+          setTimeout(() => page?.close(), 5000);
           if (!entries) return reject("No entries found");
           console.log(`@${this.user} tweets:`, entries.length);
           resolve(entries);
         }
       });
-      const isoDate = "2023-07-28"; //new Date().toISOString().split("T")[0];
+      const isoDate = new Date().toISOString().split("T")[0];
       const twitterUrl = `https://twitter.com/search?q=(from:@${this.user})%20since:${isoDate}&src=typed_query&f=live`;
       logger.info(`Navigating to @${this.user}`);
       page
