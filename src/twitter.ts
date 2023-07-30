@@ -20,11 +20,10 @@ export class Twitter {
 
   tweets(): Promise<any[]> {
     return new Promise(async (resolve, reject) => {
-      let timer: NodeJS.Timeout;
       const page = await this.browser.newPage();
       this.lastPage = page;
       await page.setViewport({ width: 1080, height: 1024 });
-      timer = setTimeout(() => {
+      const timer = setTimeout(() => {
         this.running = false;
         page.close();
         reject("Timeout reached");
@@ -41,8 +40,16 @@ export class Twitter {
           }
           const entries = match(this.pattern, instructions);
           this.running = false;
-          global.clearTimeout(timer);
-          setTimeout(() => page?.close(), 5000);
+          clearTimeout(timer);
+          setTimeout(() => {
+            console.log(`closing ${this.user}`);
+            if (page && page.isClosed() == false)
+              page
+                ?.close()
+                .catch((err) =>
+                  console.error("page close", err.name, err.message)
+                );
+          }, 5000);
           if (!entries) return reject("No entries found");
           console.log(`@${this.user} tweets:`, entries.length);
           resolve(entries);
